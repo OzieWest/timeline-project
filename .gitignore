@@ -1,0 +1,12 @@
+node_modules
+public/obj
+public/bin
+public/bower_components
+public/Properties
+public/Web.config
+public/Web.Debug.config
+public/Web.Release.config
+public/public.csproj
+public/public.csproj.user
+public.sln
+public.v12.suo

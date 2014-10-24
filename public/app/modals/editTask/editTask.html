@@ -1,0 +1,42 @@
+﻿<div class="modal-content">
+	<div class="modal-header">
+		<button type="button" class="close" ng-click="modalCtrl.close()">×</button>
+		<h4 class="modal-title">
+			Task settings
+		</h4>
+	</div>
+	<div class="modal-body">
+
+		<div>
+			<h5>Section</h5>
+			<input type="text" class="form-control input-transparent" ng-model="modalCtrl.task.section">
+		</div>
+
+		<div>
+			<h5>Action</h5>
+			<input type="text" class="form-control input-transparent" ng-model="modalCtrl.task.action">
+		</div>
+
+		<div>
+			<h5>Title</h5>
+			<input type="text" class="form-control input-transparent" ng-model="modalCtrl.task.title">
+		</div>
+
+		<div>
+			<h5>Description</h5>
+			<textarea rows="5" class="form-control input-transparent" ng-model="modalCtrl.task.description"></textarea>
+		</div>
+		
+	</div>
+	<div class="modal-footer">
+		<div class="btn-group">
+			<label class="btn btn-default" ng-model="modalCtrl.task.status" btn-radio="'progress'" uncheckable>
+				Progress <i class="fa fa-bolt color-orange"></i>
+			</label>
+			<label class="btn btn-default" ng-model="modalCtrl.task.status" btn-radio="'success'" uncheckable>
+				Success <i class="fa fa-check color-green"></i>
+			</label>
+		</div>
+		<button type="button" class="btn btn-primary" ng-click="modalCtrl.saveChanges()">Save changes</button>
+	</div>
+</div>

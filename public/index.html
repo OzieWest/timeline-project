@@ -1,0 +1,44 @@
+<html>
+<head>
+	<title>Timeline project</title>
+
+	<link href="assets/css/application.min.css" rel="stylesheet" />
+	<link href="bower_components/toastr/toastr.min.css" rel="stylesheet" />
+</head>
+<body class="background-dark">
+
+	<ng-view></ng-view>
+
+	<!--libs-->
+	<script src="bower_components/jquery/dist/jquery.min.js"></script>
+	<script src="bower_components/toastr/toastr.min.js"></script>
+	<script src="bower_components/underscore/underscore-min.js"></script>
+	<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+	<script src="bower_components/angular/angular.js"></script>
+	<script src="bower_components/angular-route/angular-route.js"></script>
+	<script src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+	<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+
+	<!--app-->
+	<script src="app/global.js"></script>
+	<script src="app/core.js"></script>
+	<script src="app/baseController.js"></script>
+
+	<!--modals-->
+	<script src="app/modals/modals.js"></script>
+	<script src="app/modals/editTask/editTask.js"></script>
+
+	<!--modules-->
+	<script src="app/modules/modules.js"></script>
+	<script src="app/modules/dashboard/dashboard.js"></script>
+	<script src="app/modules/login/login.js"></script>
+
+	<script>
+		$(function () {
+			angular
+				.bootstrap(document, ['app.core']);
+		});
+	</script>
+</body>
+</html>

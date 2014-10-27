@@ -1,6 +1,8 @@
 ﻿module APP_MODAL_EDIT_PROJECT {
 
 	class Controller extends BaseController {
+
+		taskModel: any;
 		task: any;
 		$modalInstance: any;
 
@@ -8,8 +10,9 @@
 		constructor($injector, $modalInstance, data) {
 			super($injector);
 
-			this.task = data;
 			this.$modalInstance = $modalInstance;
+
+			this.task = data;
 		}
 
 		saveChanges() {

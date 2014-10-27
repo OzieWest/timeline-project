@@ -41,7 +41,7 @@
 									<span class="text-info">{{ task.action }}</span> {{ task.title }}
 								</div>
 								<div style="color: rgb(131, 130, 130); font-size: 0.8em;">
-									{{ task.date.toDateString() }}
+									{{ task._created | date:'medium' }}
 								</div>
 							</td>
 							<td>

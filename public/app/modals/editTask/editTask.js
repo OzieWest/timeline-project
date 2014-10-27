@@ -11,8 +11,9 @@ var APP_MODAL_EDIT_PROJECT;
         function Controller($injector, $modalInstance, data) {
             _super.call(this, $injector);
 
-            this.task = data;
             this.$modalInstance = $modalInstance;
+
+            this.task = data;
         }
         Controller.prototype.saveChanges = function () {
             this.$modalInstance.close(this.task);

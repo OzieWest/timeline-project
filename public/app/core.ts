@@ -4,6 +4,8 @@
 		.module('app.core', [
 			'ngRoute',
 			'ui.bootstrap',
+			'restangular',
+
 			'app.modules',
 			'app.modals'
 		])
@@ -20,6 +22,13 @@
 					controller: 'loginCtrl',
 					controllerAs: 'ctrl'
 				});
+		})
+		.config((RestangularProvider) => {
+			RestangularProvider.setBaseUrl('/api/v1/');
+
+			RestangularProvider.setRestangularFields({
+				id: "_id",
+			});
 		});
 
 }

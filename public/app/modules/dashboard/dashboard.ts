@@ -1,79 +1,66 @@
-﻿var taskStatus = {
-	//open: () => { return 'open'; },
-	progress: () => { return 'progress'; },
-	success: () => { return 'success'; },
-};
-
-var tasks = [
-	{ _id: '1', section: 'NodeJS', title: 'bower', description: 'bower', action: 'Inspect', date: new Date(), status: taskStatus.success() },
-	{ _id: '2', section: 'NodeJS', title: 'supervisor', description: 'supervisor', action: 'Inspect', date: new Date(), status: taskStatus.progress() },
-	{ _id: '3', section: 'NodeJS', title: 'node-inspector', description: 'node-inspector', action: 'Inspect', date: new Date(), status: taskStatus.progress() },
-	{ _id: '4', section: 'NodeJS', title: 'mongoose', description: 'mongoose', action: 'Inspect', date: new Date(), status: taskStatus.progress() },
-]
-
-module APP_DASHBOARD {
+﻿module APP_DASHBOARD {
 
 	class Controller extends BaseController {
 
 		pageTitle = 'Timeline';
 		pageDescription = 'all project in one place'
 
-		tasks = tasks;
+		tasks: Array<ITask>;
+
+		taskCollection: any;
 
 		static $inject = ['$injector'];
 		constructor($injector) {
 			super($injector);
 
+			this.taskCollection = this.Restangular.all('544e179dad83406df93f98ec/tasks');
+
 			this.initPage();
 		}
 
 		initPage() {
-			this.loadTaskList().then(
-				(result) => {
-					this.tasks = result;
+			// v0/544e179dad83406df93f98ec/tasks/544e38c89738e46847191550
+
+			this.taskCollection.getList().then(
+				(collection) => {
+					this.tasks = collection;
+					console.log(collection);
 				});
 		}
 
-		// debug
-		loadTaskList(): ng.IPromise<any> {
-			var def = this.$q.defer();
-			def.resolve(tasks);
-			return def.promise;
-		}
-
 		editTask(id: string) {
-
 			var modalInstance = this.$modal.open({
 				templateUrl: GLOBAL.path.modals('editTask/editTask.html'),
 				controller: 'modalEditTask',
 				controllerAs: 'modalCtrl',
 				resolve: {
 					data: () => {
-						var task = _.find(this.tasks, (t) => t._id === id);
-						return angular.copy(task);
+						var elm = _.find(this.tasks, (t) => t._id === id);
+						return angular.copy(elm);
 					}
 				}
 			});
 
 			modalInstance.result.then(
-				(data) => {
+				(task) => {
 					var index = null;
-					var task = _.find(this.tasks, (t, i) => {
-						if (t._id === data._id) {
+					_.find(this.tasks, (t, i) => {
+						if (t._id === task._id) {
 							index = i;
 							return true;
 						}
 						return false;
 					});
 
-					this.tasks[index] = data;
-
-					// DB update!
+					task.save().then(
+						(result) => {
+							this.tasks[index] = task;
+							this.show.success('Update complete!', 'DEBUG');
+						});
 				});
 		}
 
 		addTask() {
-
 			var modalInstance = this.$modal.open({
 				templateUrl: GLOBAL.path.modals('editTask/editTask.html'),
 				controller: 'modalEditTask',
@@ -82,7 +69,7 @@ module APP_DASHBOARD {
 					data: () => {
 						return {
 							status: 'progress',
-							date: new Date()
+							_created: new Date()
 						};
 					}
 				}
@@ -92,7 +79,10 @@ module APP_DASHBOARD {
 				(data) => {
 					this.tasks.push(data);
 
-					// DB update!
+					this.taskCollection.post(data).then(
+						(result) => {
+							console.log(result);
+						});
 				});
 		}
 	}

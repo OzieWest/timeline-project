@@ -4,23 +4,6 @@
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var taskStatus = {
-    //open: () => { return 'open'; },
-    progress: function () {
-        return 'progress';
-    },
-    success: function () {
-        return 'success';
-    }
-};
-
-var tasks = [
-    { _id: '1', section: 'NodeJS', title: 'bower', description: 'bower', action: 'Inspect', date: new Date(), status: taskStatus.success() },
-    { _id: '2', section: 'NodeJS', title: 'supervisor', description: 'supervisor', action: 'Inspect', date: new Date(), status: taskStatus.progress() },
-    { _id: '3', section: 'NodeJS', title: 'node-inspector', description: 'node-inspector', action: 'Inspect', date: new Date(), status: taskStatus.progress() },
-    { _id: '4', section: 'NodeJS', title: 'mongoose', description: 'mongoose', action: 'Inspect', date: new Date(), status: taskStatus.progress() }
-];
-
 var APP_DASHBOARD;
 (function (APP_DASHBOARD) {
     var Controller = (function (_super) {
@@ -29,22 +12,18 @@ var APP_DASHBOARD;
             _super.call(this, $injector);
             this.pageTitle = 'Timeline';
             this.pageDescription = 'all project in one place';
-            this.tasks = tasks;
+
+            this.taskCollection = this.Restangular.all('544e179dad83406df93f98ec/tasks');
 
             this.initPage();
         }
         Controller.prototype.initPage = function () {
+            // v0/544e179dad83406df93f98ec/tasks/544e38c89738e46847191550
             var _this = this;
-            this.loadTaskList().then(function (result) {
-                _this.tasks = result;
+            this.taskCollection.getList().then(function (collection) {
+                _this.tasks = collection;
+                console.log(collection);
             });
-        };
-
-        // debug
-        Controller.prototype.loadTaskList = function () {
-            var def = this.$q.defer();
-            def.resolve(tasks);
-            return def.promise;
         };
 
         Controller.prototype.editTask = function (id) {
@@ -55,26 +34,28 @@ var APP_DASHBOARD;
                 controllerAs: 'modalCtrl',
                 resolve: {
                     data: function () {
-                        var task = _.find(_this.tasks, function (t) {
+                        var elm = _.find(_this.tasks, function (t) {
                             return t._id === id;
                         });
-                        return angular.copy(task);
+                        return angular.copy(elm);
                     }
                 }
             });
 
-            modalInstance.result.then(function (data) {
+            modalInstance.result.then(function (task) {
                 var index = null;
-                var task = _.find(_this.tasks, function (t, i) {
-                    if (t._id === data._id) {
+                _.find(_this.tasks, function (t, i) {
+                    if (t._id === task._id) {
                         index = i;
                         return true;
                     }
                     return false;
                 });
 
-                _this.tasks[index] = data;
-                // DB update!
+                task.save().then(function (result) {
+                    _this.tasks[index] = task;
+                    _this.show.success('Update complete!', 'DEBUG');
+                });
             });
         };
 
@@ -88,7 +69,7 @@ var APP_DASHBOARD;
                     data: function () {
                         return {
                             status: 'progress',
-                            date: new Date()
+                            _created: new Date()
                         };
                     }
                 }
@@ -96,7 +77,10 @@ var APP_DASHBOARD;
 
             modalInstance.result.then(function (data) {
                 _this.tasks.push(data);
-                // DB update!
+
+                _this.taskCollection.post(data).then(function (result) {
+                    console.log(result);
+                });
             });
         };
         Controller.$inject = ['$injector'];

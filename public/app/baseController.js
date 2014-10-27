@@ -14,6 +14,7 @@
         this.$routeParams = this.require('$routeParams');
         this.show = this.require('toastr');
         this.$modal = this.require('$modal');
+        this.Restangular = this.require('Restangular');
     };
 
     BaseController.prototype.require = function (key) {

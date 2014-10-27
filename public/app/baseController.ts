@@ -11,6 +11,7 @@
 	$modal: any;
 
 	show: Toastr;
+	Restangular: any;
 
 	constructor($injector) {
 		this.$injector = $injector;
@@ -28,6 +29,7 @@
 		this.$routeParams = this.require('$routeParams');
 		this.show = this.require('toastr');
 		this.$modal = this.require('$modal');
+		this.Restangular = this.require('Restangular');
 	}
 
 	require(key: string) {

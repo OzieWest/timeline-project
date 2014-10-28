@@ -1,0 +1,21 @@
+{
+  "name": "timeline",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "soramusoka@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.9.1",
+    "express": "^4.9.8",
+    "jsonschema": "^1.0.0",
+    "mongodb": "^1.4.19",
+    "mongoose": "^3.8.18",
+    "morgan": "^1.4.0",
+    "restangular": "^1.4.0",
+    "underscore": "^1.7.0"
+  }
+}

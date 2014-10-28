@@ -22,17 +22,17 @@
 			<section class="widget">
 				<header>
 					<h4>
-						<i class="eicon-share"></i> <a ng-click="ctrl.addTask()">New</a>
+						<i class="eicon-share"></i> <a ng-click="ctrl.createTask()">New</a>
 					</h4>
 				</header>
 				<div class="body">
 					<table class="table">
 						<tr ng-repeat="task in ctrl.tasks track by $index" style="border-bottom: 1px solid rgb(103, 103, 103)">
 							<td style="width: 100px;font-size: 1.2em;">
-								<a class="btn btn-default btn-block" ng-if="task.status === 'success'" ng-click="ctrl.editTask(task._id)">
+								<a class="btn btn-default btn-block" ng-if="task.status === 'success'" ng-click="ctrl.updateTask(task)">
 									Success <i class="fa fa-check color-green"></i>
 								</a>
-								<a class="btn btn-default btn-block" ng-if="task.status === 'progress'" ng-click="ctrl.editTask(task._id)">
+								<a class="btn btn-default btn-block" ng-if="task.status === 'progress'" ng-click="ctrl.updateTask(task)">
 									Progress <i class="fa fa-bolt color-orange"></i>
 								</a>
 							</td>

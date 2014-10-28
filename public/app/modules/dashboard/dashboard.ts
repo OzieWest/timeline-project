@@ -28,39 +28,50 @@
 				});
 		}
 
-		editTask(id: string) {
+		updateTask(oldTask) {
 			var modalInstance = this.$modal.open({
 				templateUrl: GLOBAL.path.modals('editTask/editTask.html'),
 				controller: 'modalEditTask',
 				controllerAs: 'modalCtrl',
 				resolve: {
 					data: () => {
-						var elm = _.find(this.tasks, (t) => t._id === id);
-						return angular.copy(elm);
+						return angular.copy(oldTask);
 					}
 				}
 			});
 
 			modalInstance.result.then(
-				(task) => {
-					var index = null;
-					_.find(this.tasks, (t, i) => {
-						if (t._id === task._id) {
-							index = i;
-							return true;
-						}
-						return false;
-					});
-
-					task.save().then(
-						(result) => {
-							this.tasks[index] = task;
-							this.show.success('Update complete!', 'DEBUG');
+				(newTask) => {
+					if (typeof newTask === 'object') {
+						var index = null;
+						_.find(this.tasks, (t, i) => {
+							if (t._id === newTask._id) {
+								index = i;
+								return true;
+							}
+							return false;
 						});
+
+						this.tasks[index] = newTask;
+						this.show.success('Update complete!', 'DEBUG');
+					}
+					else if(typeof newTask === 'string') {
+						var index = null;
+						_.find(this.tasks, (t, i) => {
+							if (t._id === oldTask._id) {
+								index = i;
+								return true;
+							}
+							return false;
+						});
+
+						this.tasks.splice(index, 1);
+						this.show.success('Delete complete!', 'DEBUG');
+					}
 				});
 		}
 
-		addTask() {
+		createTask() {
 			var modalInstance = this.$modal.open({
 				templateUrl: GLOBAL.path.modals('editTask/editTask.html'),
 				controller: 'modalEditTask',
@@ -77,12 +88,8 @@
 
 			modalInstance.result.then(
 				(data) => {
-					this.tasks.push(data);
-
-					this.taskCollection.post(data).then(
-						(result) => {
-							console.log(result);
-						});
+					this.tasks.splice(0, 0, data);
+					this.show.success('OK', 'DEBUG');
 				});
 		}
 	}

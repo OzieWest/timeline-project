@@ -68,6 +68,10 @@ app.get('/api/v1/:userid/tasks', function(req, res){
 				return;
 			}
 
+			tasks = tasks.sort(function(a,b){
+			  return new Date(b._created) - new Date(a._created);
+			});
+
 			res.send(tasks);
 		});
 	});

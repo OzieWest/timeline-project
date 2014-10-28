@@ -26,7 +26,7 @@ var APP_DASHBOARD;
             });
         };
 
-        Controller.prototype.editTask = function (id) {
+        Controller.prototype.updateTask = function (oldTask) {
             var _this = this;
             var modalInstance = this.$modal.open({
                 templateUrl: GLOBAL.path.modals('editTask/editTask.html'),
@@ -34,32 +34,41 @@ var APP_DASHBOARD;
                 controllerAs: 'modalCtrl',
                 resolve: {
                     data: function () {
-                        var elm = _.find(_this.tasks, function (t) {
-                            return t._id === id;
-                        });
-                        return angular.copy(elm);
+                        return angular.copy(oldTask);
                     }
                 }
             });
 
-            modalInstance.result.then(function (task) {
-                var index = null;
-                _.find(_this.tasks, function (t, i) {
-                    if (t._id === task._id) {
-                        index = i;
-                        return true;
-                    }
-                    return false;
-                });
+            modalInstance.result.then(function (newTask) {
+                if (typeof newTask === 'object') {
+                    var index = null;
+                    _.find(_this.tasks, function (t, i) {
+                        if (t._id === newTask._id) {
+                            index = i;
+                            return true;
+                        }
+                        return false;
+                    });
 
-                task.save().then(function (result) {
-                    _this.tasks[index] = task;
+                    _this.tasks[index] = newTask;
                     _this.show.success('Update complete!', 'DEBUG');
-                });
+                } else if (typeof newTask === 'string') {
+                    var index = null;
+                    _.find(_this.tasks, function (t, i) {
+                        if (t._id === oldTask._id) {
+                            index = i;
+                            return true;
+                        }
+                        return false;
+                    });
+
+                    _this.tasks.splice(index, 1);
+                    _this.show.success('Delete complete!', 'DEBUG');
+                }
             });
         };
 
-        Controller.prototype.addTask = function () {
+        Controller.prototype.createTask = function () {
             var _this = this;
             var modalInstance = this.$modal.open({
                 templateUrl: GLOBAL.path.modals('editTask/editTask.html'),
@@ -76,11 +85,8 @@ var APP_DASHBOARD;
             });
 
             modalInstance.result.then(function (data) {
-                _this.tasks.push(data);
-
-                _this.taskCollection.post(data).then(function (result) {
-                    console.log(result);
-                });
+                _this.tasks.splice(0, 0, data);
+                _this.show.success('OK', 'DEBUG');
             });
         };
         Controller.$inject = ['$injector'];

@@ -10,13 +10,34 @@ var APP_MODAL_EDIT_PROJECT;
         __extends(Controller, _super);
         function Controller($injector, $modalInstance, data) {
             _super.call(this, $injector);
+            this.action = 'update';
 
+            this.taskCollection = this.Restangular.all('544e179dad83406df93f98ec/tasks');
             this.$modalInstance = $modalInstance;
+
+            this.action = data._id ? 'update' : 'create';
 
             this.task = data;
         }
-        Controller.prototype.saveChanges = function () {
-            this.$modalInstance.close(this.task);
+        Controller.prototype.createTask = function () {
+            var _this = this;
+            this.taskCollection.post(this.task).then(function (result) {
+                _this.$modalInstance.close(result);
+            });
+        };
+
+        Controller.prototype.updateTask = function () {
+            var _this = this;
+            this.task.save().then(function (result) {
+                _this.$modalInstance.close(_this.task);
+            });
+        };
+
+        Controller.prototype.deleteTask = function () {
+            var _this = this;
+            this.task.remove().then(function (result) {
+                _this.$modalInstance.close(result);
+            });
         };
 
         Controller.prototype.close = function () {

@@ -12,11 +12,8 @@
 		constructor($injector, $modalInstance, data) {
 			super($injector);
 
-			this.isAuthenticate(() => {
-
-				var id = this.Context.user._id;
-
-				this.taskCollection = this.Restangular.all(id + '/tasks');
+			this.loadProfile(() => {
+				this.taskCollection = this.Restangular.all('tasks');
 				this.$modalInstance = $modalInstance;
 
 				this.action = data._id ? 'update' : 'create';
@@ -29,6 +26,10 @@
 			this.taskCollection.post(this.task).then(
 				(result) => {
 					this.$modalInstance.close(result);
+				},
+				(error) => {
+					this.close();
+					this.onError(error)
 				});
 		}
 
@@ -36,6 +37,10 @@
 			this.task.save().then(
 				(result) => {
 					this.$modalInstance.close(this.task);
+				},
+				(error) => {
+					this.close();
+					this.onError(error)
 				});
 		}
 
@@ -43,6 +48,10 @@
 			this.task.remove().then(
 				(result) => {
 					this.$modalInstance.close(result);
+				},
+				(error) => {
+					this.close();
+					this.onError(error)
 				});
 		}
 

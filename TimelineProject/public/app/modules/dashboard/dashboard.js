@@ -11,14 +11,13 @@ var APP_DASHBOARD;
         function Controller($injector) {
             var _this = this;
             _super.call(this, $injector);
-            this.pageTitle = 'Timeline';
+            this.pageTitle = 'Dashboard';
             this.pageDescription = 'all project in one place';
 
-            this.isAuthenticate(function () {
+            this.loadProfile(function () {
                 _this.isPageReady = true;
 
-                var id = _this.Context.user._id;
-                _this.taskCollection = _this.Restangular.all(id + '/tasks');
+                _this.taskCollection = _this.Restangular.all('tasks');
 
                 _this.initPage();
             });
@@ -27,6 +26,9 @@ var APP_DASHBOARD;
             var _this = this;
             this.taskCollection.getList().then(function (collection) {
                 _this.tasks = collection;
+                _this.isPageBusy = false;
+            }, function (error) {
+                return _this.onError(error);
             });
         };
 

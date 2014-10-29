@@ -13,7 +13,10 @@ var APP_LOGIN;
             this.email = '';
             this.password = '';
 
-            this.initPage();
+            if (this.isAuthenticate())
+                this.$location.path('/dashboard');
+            else
+                this.initPage();
         }
         Controller.prototype.initPage = function () {
             this.isPageReady = true;
@@ -31,8 +34,15 @@ var APP_LOGIN;
                 };
 
                 this.$http.post('./api/v1/auth', query).then(function (result) {
-                    _this.Context.user = result.data;
+                    _this.Context.user = result.data.user;
+                    _this.$window.sessionStorage.token = result.data.token;
+                    _this.$window.sessionStorage.expires = result.data.expires;
+
+                    _this.show.success('Success');
                     _this.$location.path('/dashboard');
+                }, function (error) {
+                    _this.show.error('Failure');
+                    _this.$log.error(error);
                 });
             } else {
                 this.show.error('Login or Password empty', 'DEBUG');

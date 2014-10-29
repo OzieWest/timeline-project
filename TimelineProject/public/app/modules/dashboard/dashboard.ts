@@ -2,7 +2,7 @@
 
 	class Controller extends PageController {
 
-		pageTitle = 'Timeline';
+		pageTitle = 'Dashboard';
 		pageDescription = 'all project in one place'
 
 		tasks: Array<ITask>;
@@ -13,11 +13,10 @@
 		constructor($injector) {
 			super($injector);
 
-			this.isAuthenticate(() => {
+			this.loadProfile(() => {
 				this.isPageReady = true;
 
-				var id = this.Context.user._id;
-				this.taskCollection = this.Restangular.all(id + '/tasks');
+				this.taskCollection = this.Restangular.all('tasks');
 
 				this.initPage();
 			});
@@ -27,7 +26,9 @@
 			this.taskCollection.getList().then(
 				(collection) => {
 					this.tasks = collection;
-				});
+					this.isPageBusy = false;
+				},
+				(error) => this.onError(error));
 		}
 
 		updateTask(oldTask) {

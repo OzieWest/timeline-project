@@ -9,6 +9,7 @@
 	$route: any;
 	$routeParams: any;
 	$modal: any;
+	$window: any;
 
 	show: Toastr;
 	Restangular: any;
@@ -32,6 +33,7 @@
 		this.$modal = this.require('$modal');
 		this.Restangular = this.require('Restangular');
 		this.Context = this.require('Context');
+		this.$window = this.require('$window');
 	}
 
 	require(key: string) {
@@ -47,17 +49,61 @@ class PageController extends BaseController {
 		super($injector);
 	}
 
-	isAuthenticate(cb) {
+	clearAuth() {
+		delete this.$window.sessionStorage.expires;
+		delete this.$window.sessionStorage.token;
+		return this.$location.path('/login');
+	}
+
+	isAuthenticate() {
+		var expires = this.$window.sessionStorage.expires;
+		var token = this.$window.sessionStorage.token;
+
+		if (!expires && !token) {
+			return false;
+		}
+
+		var date = new Date(expires);
+		if (new Date() >= date) {
+			return false;
+		}
+
+		return true;
+	}
+
+	loadProfile(cb) {
+		if (!this.isAuthenticate()) return this.clearAuth();
+
 		if (this.Context.user._id) {
-			this.$log.debug('[profile]', this.Context.user);
 			cb();
 		}
 		else {
-			this.$location.path('/login');
+			var query = {
+				method: 'get',
+				url: './api/v1/profile',
+				headers: {
+					Auth: this.$window.sessionStorage.token
+				}
+			};
+			this.$http(query).then(
+				(result) => {
+					this.Context.user = result.data;
+					cb();
+				},
+				(error) => {
+					return this.clearAuth();
+				});
 		}
 	}
 
 	isUserInRole(role: string) {
 		return this.Context.user.role === role;
+	}
+
+	onError(error) {
+		if (error.status === 401) {
+			this.show.error('Unauthorized');
+			this.clearAuth();
+		}
 	}
 }

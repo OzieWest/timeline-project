@@ -36,6 +36,12 @@
 		.config((RestangularProvider) => {
 			RestangularProvider.setBaseUrl('/api/v1/');
 
+			RestangularProvider.setDefaultHeaders({
+				auth: function () {
+					return window.sessionStorage['token'];
+				}
+			});
+
 			RestangularProvider.setRestangularFields({
 				id: "_id",
 			});

@@ -2,16 +2,7 @@ declare var module;
 
 /* Mongo */
 var mongoose = require('mongoose'),
-	crypto = require('crypto');
-
-var createSalt = (): string => {
-	return crypto.randomBytes(128).toString('base64');
-};
-
-var hashPasswrod = (salt: string, pwd: string): string => {
-	var hmac = crypto.createHmac('sha1', salt);
-	return hmac.update(pwd).digest('hex');
-}
+	AuthFactory = require('./authFactory');
 
 mongoose.connect('mongodb://localhost/timeline');
 
@@ -50,209 +41,150 @@ var Tasks = mongoose.model('Task', {
 
 var API_PATH = '/api/v1';
 
-
 /* Auth --------------------------------------------------------------*/
 var authRoute = (router) => {
+
 	router.post(API_PATH + '/auth', (req, res) => {
-		var data = req.body;
+		if (!req.body) return res.status(400).end();
 
-		if (data && data.username && data.password) {
-			Users.findOne({ username: data.username }, (error, user: IUser) => {
-				if (error) {
-					return res.send(401);
-				}
+		var username = req.body.username;
+		var password = req.body.password;
 
-				if (!user) {
-					return res.send(401);
-				}
+		if (!username || !password) return res.status(400).end();
 
-				var hash = hashPasswrod(user.salt, data.password);
+		Users.findOne({ username: username }, (error, user: IUser) => {
+			if (error || !user) return res.status(401).end();
 
-				if (user.password !== hash) {
-					return res.send(401);
-				}
+			var hash = AuthFactory.hashPasswrod(user.salt, password);
+			if (user.password !== hash) return res.status(400).end();
 
-				res.send(user);
-			});
-		}
-		else
-			res.status(400).send('Bad request');
-	});
-};
-
-
-/* Users --------------------------------------------------------------*/
-var userRoute = (router) => {
-	router.get(API_PATH + '/users', (req, res) => {
-		Users.find({}, (error, users) => {
-			if (error) {
-				return res.send(400);
-			}
-
-			if (!users.length) {
-				var pass = 'soramusoka';
-				var us = 'soramusoka@gmail.com';
-				var salt = createSalt();
-				var hash = hashPasswrod(salt, pass);
-
-				var newUser = {
-					username: us,
-					password: hash,
-					salt: salt
-				};
-
-				Users.create(newUser, (err, user) => {
-					if (error) {
-						return res.send(400);
-					}
-					users.push(user);
-					res.json(users);
+			AuthFactory.encodeToken(user._id, (token, expires) => {
+				res.json({
+					token: token,
+					expires: expires,
+					user: user
 				});
-			}
+			});
 		});
 	});
+
+	router.use((req, res, next) => {
+		var token = req.headers.auth;
+		if (!token) return next();
+
+		try {
+			var decoded = AuthFactory.decodeToken(token);
+
+			if (new Date() >= new Date(decoded.exp))
+				return next();
+
+			req.userId = decoded.iss;
+			return next();
+		}
+		catch (err) {
+			return next();
+		}
+	});
 };
 
-/* Tasks --------------------------------------------------------------*/
 module.exports = (app) => {
 
 	authRoute(app);
 
-	userRoute(app);
+	/* Get Profile */
+	app.get(API_PATH + '/profile', (req, res) => {
+		if (!req.userId) return res.status(401).end();
 
-	app.get(API_PATH + '/:userid', (req, res) => {
-		var id = req.params.userid;
-
-		Users.findOne({ _id: id }, (error, user) => {
-			if (error) {
-				res.status(400).send(error);
-				console.log(error);
-				return;
+		Users.findOne({ _id: req.userId }, (error, user) => {
+			if (error || !user) {
+				return res.status(401).end();
 			}
-			res.send(user);
+			res.json(user);
 		});
 	});
 
-	app.get(API_PATH + '/:userid/tasks', (req, res) => {
-		var id = req.params.userid;
+	/* Get All Task */
+	app.get(API_PATH + '/tasks', (req, res) => {
+		if (!req.userId) return res.status(401).end();
 
-		Users.findOne({ _id: id }, (error, user) => {
+		Tasks.find({ userId: req.userId }, (error, tasks) => {
 			if (error) {
-				res.status(400).send(error);
 				console.log(error);
-				return;
+				return res.status(400).send(error);
 			}
 
-			Tasks.find({ userId: user._id }, (error, tasks) => {
-				if (error) {
-					res.status(400).send(error);
-					console.log(error);
-					return;
-				}
-
-				//tasks = tasks.sort((a, b) => {
-				//	return <any>(new Date(b._created)) - <any>(new Date(a._created));
-				//});
-
-				res.send(tasks);
+			tasks = tasks.sort((a, b) => {
+				return <any>(new Date(b._created)) - <any>(new Date(a._created));
 			});
+
+			res.send(tasks);
 		});
 	});
 
-	app.get(API_PATH + '/:userid/tasks/:taskid', (req, res) => {
-		var userId = req.params.userid;
+	/* Get Task */
+	app.get(API_PATH + '/tasks/:taskid', (req, res) => {
+		if (!req.userId) return res.status(401).end();
+
 		var taskId = req.params.taskid;
 
-		Users.findOne({ _id: userId }, (error, user) => {
+		Tasks.findOne({ userId: req.userId, _id: taskId }, (error, task) => {
 			if (error) {
-				res.status(400).send(error);
 				console.log(error);
-				return;
+				return res.status(400).send(error);
 			}
-
-			Tasks.findOne({ userId: user._id, _id: taskId }, (error, tasks) => {
-				if (error) {
-					res.status(400).send(error);
-					console.log(error);
-					return;
-				}
-				res.send(tasks);
-			});
+			res.send(task);
 		});
 	});
 
-	app.post(API_PATH + '/:userid/tasks', (req, res) => {
-		var userId = req.params.userid;
+	/* New Task */
+	app.post(API_PATH + '/tasks', (req, res) => {
+		if (!req.userId) return res.status(401).end();
 
-		// config
 		var newTask = req.body;
 		newTask._created = new Date();
 		newTask._updated = new Date();
-		newTask.userId = userId;
+		newTask.userId = req.userId;
 
-		// db
-		Users.findOne({ _id: userId }, (error, user) => {
+		Tasks.create(newTask, (error, task) => {
 			if (error) {
-				res.status(400).send(error);
 				console.log(error);
-				return;
+				return res.status(400).send(error);
 			}
-			Tasks.create(newTask, (err, task) => {
-				if (error) {
-					res.status(400).send(error);
-					console.log(error);
-					return;
-				}
-				res.send(task);
-			});
+			res.send(task);
 		});
 	});
 
-	app.put(API_PATH + '/:userid/tasks/:taskid', (req, res) => {
-		var userId = req.params.userid;
+	/* Update Task */
+	app.put(API_PATH + '/tasks/:taskid', (req, res) => {
+		if (!req.userId) return res.status(401).end();
+
 		var taskId = req.params.taskid;
 
-		// config
 		var oldTask = req.body;
 		oldTask._updated = new Date();
-		oldTask.userId = userId;
+		oldTask.userId = req.userId;
 
-		// db
-		Users.findOne({ _id: userId }, (error, user) => {
+		Tasks.update({ userId: req.userId, _id: taskId }, oldTask, (error, count, row) => {
 			if (error) {
-				res.status(400).send(error);
 				console.log(error);
-				return;
+				return res.status(400).send(error);
 			}
-			Tasks.update({ userId: user._id, _id: taskId }, oldTask, (err, count, row) => {
-				if (error) {
-					res.status(400).send(error);
-					console.log(error);
-					return;
-				}
-				res.send(row);
-			});
+			res.send(row);
 		});
 	});
 
-	app.delete(API_PATH + '/:userid/tasks/:taskid', (req, res) => {
-		var userId = req.params.userid;
+	/* Delete Task */
+	app.delete(API_PATH + '/tasks/:taskid', (req, res) => {
+		if (!req.userId) return res.status(401).end();
+
 		var taskId = req.params.taskid;
 
-		Users.findOne({ _id: userId }, (error, user) => {
+		Tasks.remove({ userId: req.userId, _id: taskId }, (error) => {
 			if (error) {
-				res.status(400).send(error);
 				console.log(error);
-				return;
+				return res.status(400).send(error);
 			}
-			Tasks.remove({ userId: user._id, _id: taskId }, (err) => {
-				if (error) {
-					res.status(400).send(error);
-					console.log(error);
-					return;
-				}
-				res.send('success');
-			});
+			res.send('success');
 		});
 	});
 }

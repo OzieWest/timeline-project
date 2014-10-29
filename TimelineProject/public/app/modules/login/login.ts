@@ -8,7 +8,10 @@
 		constructor($injector) {
 			super($injector);
 
-			this.initPage();
+			if (this.isAuthenticate())
+				this.$location.path('/dashboard');
+			else
+				this.initPage();
 		}
 
 		initPage() {
@@ -27,9 +30,17 @@
 				};
 
 				this.$http.post('./api/v1/auth', query).then(
-					(result) => {
-						this.Context.user = result.data;
+					(result: any) => {
+						this.Context.user = result.data.user;
+						this.$window.sessionStorage.token = result.data.token;
+						this.$window.sessionStorage.expires = result.data.expires;
+
+						this.show.success('Success');
 						this.$location.path('/dashboard');
+					},
+					(error) => {
+						this.show.error('Failure');
+						this.$log.error(error);
 					});
 			}
 			else {

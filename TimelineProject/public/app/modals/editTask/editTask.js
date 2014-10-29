@@ -13,10 +13,8 @@ var APP_MODAL_EDIT_PROJECT;
             _super.call(this, $injector);
             this.action = 'update';
 
-            this.isAuthenticate(function () {
-                var id = _this.Context.user._id;
-
-                _this.taskCollection = _this.Restangular.all(id + '/tasks');
+            this.loadProfile(function () {
+                _this.taskCollection = _this.Restangular.all('tasks');
                 _this.$modalInstance = $modalInstance;
 
                 _this.action = data._id ? 'update' : 'create';
@@ -28,6 +26,9 @@ var APP_MODAL_EDIT_PROJECT;
             var _this = this;
             this.taskCollection.post(this.task).then(function (result) {
                 _this.$modalInstance.close(result);
+            }, function (error) {
+                _this.close();
+                _this.onError(error);
             });
         };
 
@@ -35,6 +36,9 @@ var APP_MODAL_EDIT_PROJECT;
             var _this = this;
             this.task.save().then(function (result) {
                 _this.$modalInstance.close(_this.task);
+            }, function (error) {
+                _this.close();
+                _this.onError(error);
             });
         };
 
@@ -42,6 +46,9 @@ var APP_MODAL_EDIT_PROJECT;
             var _this = this;
             this.task.remove().then(function (result) {
                 _this.$modalInstance.close(result);
+            }, function (error) {
+                _this.close();
+                _this.onError(error);
             });
         };
 

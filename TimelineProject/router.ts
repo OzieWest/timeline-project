@@ -1,4 +1,5 @@
 declare var module;
+declare var require;
 
 /* Mongo */
 var mongoose = require('mongoose'),

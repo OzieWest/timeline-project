@@ -38,7 +38,7 @@
 				controllerAs: 'modalCtrl',
 				resolve: {
 					data: () => {
-						return angular.copy(oldTask);
+						return oldTask;
 					}
 				}
 			});

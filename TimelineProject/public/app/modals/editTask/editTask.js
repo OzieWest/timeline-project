@@ -34,6 +34,7 @@ var APP_MODAL_EDIT_PROJECT;
 
         Controller.prototype.updateTask = function () {
             var _this = this;
+            console.log(this.task);
             this.task.save().then(function (result) {
                 _this.$modalInstance.close(_this.task);
             }, function (error) {

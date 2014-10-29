@@ -34,6 +34,7 @@
 		}
 
 		updateTask() {
+			console.log(this.task);
 			this.task.save().then(
 				(result) => {
 					this.$modalInstance.close(this.task);

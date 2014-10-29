@@ -14,7 +14,8 @@
         'ui.bootstrap',
         'restangular',
         'app.modules',
-        'app.modals'
+        'app.modals',
+        'app.directives'
     ]).constant('toastr', toastr).config(function ($routeProvider) {
         $routeProvider.when('/dashboard', {
             templateUrl: GLOBAL.path.modules('dashboard/dashboard.html'),
@@ -32,6 +33,16 @@
             auth: function () {
                 return window.sessionStorage['token'];
             }
+        });
+
+        RestangularProvider.addRequestInterceptor(function (element, operation, route, url) {
+            console.info(['REQ', operation, url, element]);
+            return element;
+        });
+
+        RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
+            console.info(['RESP', operation, url, data]);
+            return data;
         });
 
         RestangularProvider.setRestangularFields({

@@ -40,7 +40,7 @@ var APP_DASHBOARD;
                 controllerAs: 'modalCtrl',
                 resolve: {
                     data: function () {
-                        return angular.copy(oldTask);
+                        return oldTask;
                     }
                 }
             });

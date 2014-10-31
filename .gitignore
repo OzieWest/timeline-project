@@ -1,5 +1,6 @@
-TimelineProject/public/bower_components
-TimelineProject/node_modules
+TimelineProject/main/server/public/bower_components
+TimelineProject/main/server/node_modules
+TimelineProject/main/server/typings
 TimelineProject/obj
 TimelineProject/bin
 TimelineProject/Properties

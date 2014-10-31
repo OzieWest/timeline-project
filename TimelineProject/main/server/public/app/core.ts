@@ -22,14 +22,19 @@
 		.constant('toastr', toastr)
 		.config(($routeProvider) => {
 			$routeProvider
+				.when('/login', {
+					templateUrl: GLOBAL.path.modules('login/login.html'),
+					controller: 'loginCtrl',
+					controllerAs: 'ctrl'
+				})
 				.when('/dashboard', {
 					templateUrl: GLOBAL.path.modules('dashboard/dashboard.html'),
 					controller: 'dashboardCtrl',
 					controllerAs: 'ctrl'
 				})
-				.when('/login', {
-					templateUrl: GLOBAL.path.modules('login/login.html'),
-					controller: 'loginCtrl',
+				.when('/task/:id', {
+					templateUrl: GLOBAL.path.modules('task/task.html'),
+					controller: 'taskCtrl',
 					controllerAs: 'ctrl'
 				})
 				.otherwise({ redirectTo: '/dashboard' });

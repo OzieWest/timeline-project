@@ -1,0 +1,85 @@
+﻿<style>
+	.modal-backdrop, .modal-backdrop.fade.in {
+		opacity: 0.40 !important;
+	}
+</style>
+
+
+<style>
+	a {
+		cursor: pointer;
+		text-decoration: none !important;
+	}
+</style>
+
+<div class="fade" ng-class="{'in':ctrl.isPageReady}">
+
+	<header-bar></header-bar>
+
+	<div class="content fade" ng-class="{'in':!ctrl.isPageBusy}">
+		<div class="row">
+			<div class="col-md-12">
+				<h2 class="page-title">{{ ctrl.pageTitle }} <small>{{ ctrl.pageDescription }}</small></h2>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+
+				<section class="widget">
+					<header>
+						<div ng-if="ctrl.action === 'update'" class="pull-right">
+							<a ng-click="ctrl.deleteTask()" class="btn btn-default">
+								Delete <i class="fa fa-trash-o"></i>
+							</a>
+						</div>
+						<p class="modal-title" ng-if="ctrl.action === 'update'" style="color:rgb(161, 161, 161)">
+							Last update: <span>{{ctrl.task._updated | date:'medium'}}</span>
+						</p>
+						<p class="modal-title" ng-if="ctrl.action === 'create'" style="color:rgb(161, 161, 161)">
+							Create new task
+						</p>
+					</header>
+					<div class="body">
+						<div style="margin-top: 20px;">
+							<h5 style="color:rgb(161, 161, 161)">Section</h5>
+							<input type="text" class="form-control input-transparent" ng-model="ctrl.task.section" autofocus>
+						</div>
+
+						<div style="margin-top: 20px;">
+							<h5 style="color:rgb(161, 161, 161)">Title</h5>
+							<input type="text" class="form-control input-transparent" ng-model="ctrl.task.title">
+						</div>
+
+						<div style="margin-top: 20px;">
+							<h5 style="color:rgb(161, 161, 161)">Description</h5>
+							<textarea rows="5" class="form-control input-transparent" ng-model="ctrl.task.description"></textarea>
+						</div>
+
+						<div style="margin-top: 20px;">
+							<div>
+								<div class="btn-group">
+									<label class="btn btn-default" ng-model="ctrl.task.status" btn-radio="'progress'" uncheckable>
+										Progress <i class="fa fa-bolt color-orange"></i>
+									</label>
+									<label class="btn btn-default" ng-model="ctrl.task.status" btn-radio="'success'" uncheckable>
+										Success <i class="fa fa-check color-green"></i>
+									</label>
+								</div>
+								<button type="button" class="btn btn-primary" ng-click="ctrl.updateTask()" ng-if="ctrl.action === 'update'">
+									Update task
+								</button>
+								<button type="button" class="btn btn-primary" ng-click="ctrl.createTask()" ng-if="ctrl.action === 'create'">
+									Create task
+								</button>
+							</div>
+						</div>
+
+					</div>
+				</section>
+
+			</div>
+		</div>
+	</div>
+
+</div>

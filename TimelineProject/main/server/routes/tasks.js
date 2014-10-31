@@ -1,4 +1,4 @@
-var TaskScheme = require('mongoose').model('Task');
+﻿var TaskScheme = require('mongoose').model('Task');
 
 /* Get All Task */
 module.exports.list = function (req, res) {
@@ -24,7 +24,7 @@ module.exports.get = function (req, res) {
     if (!req.userId)
         return res.status(401).end();
 
-    var id = req.params.taskid;
+    var id = req.params.id;
 
     TaskScheme.findOne({ userId: req.userId, _id: id }, function (error, task) {
         if (error) {

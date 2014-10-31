@@ -44,6 +44,8 @@
 class PageController extends BaseController {
 	isPageReady = false;
 	isPageBusy = true;
+	pageTitle: string;
+	pageDescription: string;
 
 	constructor($injector) {
 		super($injector);

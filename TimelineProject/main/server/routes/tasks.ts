@@ -22,7 +22,7 @@ module.exports.list = (req, res) => {
 module.exports.get = (req, res) => {
 	if (!req.userId) return res.status(401).end();
 
-	var id = req.params.taskid;
+	var id = req.params.id;
 
 	TaskScheme.findOne({ userId: req.userId, _id: id }, (error, task) => {
 		if (error) {

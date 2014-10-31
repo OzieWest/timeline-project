@@ -13,86 +13,118 @@ var APP_DASHBOARD;
             _super.call(this, $injector);
             this.pageTitle = 'Dashboard';
             this.pageDescription = 'all project in one place';
+            this.state = 'list';
 
             this.loadProfile(function () {
                 _this.isPageReady = true;
 
-                _this.taskCollection = _this.Restangular.all('tasks');
+                _this.taskRepository = _this.Restangular.all('tasks');
 
                 _this.initPage();
             });
         }
         Controller.prototype.initPage = function () {
             var _this = this;
-            this.taskCollection.getList().then(function (collection) {
-                _this.tasks = collection;
+            this.taskRepository.getList().then(function (collection) {
+                _this.taskList = collection;
                 _this.isPageBusy = false;
             }, function (error) {
                 return _this.onError(error);
             });
         };
 
-        Controller.prototype.updateTask = function (oldTask) {
-            var _this = this;
-            var modalInstance = this.$modal.open({
-                templateUrl: GLOBAL.path.modals('editTask/editTask.html'),
-                controller: 'modalEditTask',
-                controllerAs: 'modalCtrl',
-                resolve: {
-                    data: function () {
-                        return oldTask;
-                    }
-                }
+        Controller.prototype.switchState = function (state, task) {
+            this.state = state;
+
+            if (state === 'list') {
+                this.task = null;
+            } else if (state === 'update') {
+                this.task = task;
+            } else if (state === 'create') {
+                this.task = {
+                    _created: '',
+                    _updated: '',
+                    title: '',
+                    description: '',
+                    section: '',
+                    status: 'progress',
+                    relations: [],
+                    userId: this.Context.user._id
+                };
+            } else {
+                this.show.error('Error');
+            }
+        };
+
+        Controller.prototype.chain = function (task) {
+            var elm = _.find(this.task.relations, function (t) {
+                return t === task._id;
             });
+            if (!elm) {
+                this.task.relations.push(task._id);
+                task.relations.push(this.task._id);
+            }
+        };
 
-            modalInstance.result.then(function (newTask) {
-                if (typeof newTask === 'object') {
-                    var index = null;
-                    _.find(_this.tasks, function (t, i) {
-                        if (t._id === newTask._id) {
-                            index = i;
-                            return true;
-                        }
-                        return false;
-                    });
+        Controller.prototype.setStatus = function (status, task) {
+            var _this = this;
+            task.status = status;
+            task.save().then(function (result) {
+                _this.show.success('Success');
+            }, function (error) {
+                return _this.onError(error);
+            });
+        };
 
-                    _this.tasks[index] = newTask;
-                    _this.show.success('Update complete!', 'DEBUG');
-                } else if (typeof newTask === 'string') {
-                    var index = null;
-                    _.find(_this.tasks, function (t, i) {
-                        if (t._id === oldTask._id) {
-                            index = i;
-                            return true;
-                        }
-                        return false;
-                    });
+        Controller.prototype.updateTask = function () {
+            var _this = this;
+            this.task.save().then(function (result) {
+                var index = -1;
+                _.each(_this.taskList, function (t, ind) {
+                    if (t._id === _this.task._id)
+                        index = ind;
+                });
 
-                    _this.tasks.splice(index, 1);
-                    _this.show.success('Delete complete!', 'DEBUG');
+                if (index !== -1) {
+                    _this.taskList[index] = _this.task;
+                    _this.task = null;
+                    _this.state = 'list';
+                    _this.show.success('Success');
                 }
+            }, function (error) {
+                return _this.onError(error);
             });
         };
 
         Controller.prototype.createTask = function () {
             var _this = this;
-            var modalInstance = this.$modal.open({
-                templateUrl: GLOBAL.path.modals('editTask/editTask.html'),
-                controller: 'modalEditTask',
-                controllerAs: 'modalCtrl',
-                resolve: {
-                    data: function () {
-                        return {
-                            status: 'progress',
-                            _created: new Date()
-                        };
-                    }
-                }
+            this.taskRepository.post(this.task).then(function (data) {
+                _this.taskList.splice(0, 0, data);
+                _this.task = null;
+                _this.state = 'list';
+                _this.show.success('Success');
+            }, function (error) {
+                return _this.onError(error);
             });
+        };
 
-            modalInstance.result.then(function (data) {
-                _this.tasks.splice(0, 0, data);
-                _this.show.success('OK', 'DEBUG');
+        Controller.prototype.deleteTask = function () {
+            var _this = this;
+            this.task.remove().then(function (result) {
+                var index = -1;
+                _.each(_this.taskList, function (t, ind) {
+                    if (t._id === _this.task._id)
+                        index = ind;
+                });
+
+                if (index !== -1) {
+                    _this.taskList.splice(index, 1);
+                    _this.task = null;
+                    _this.state = 'list';
+                    _this.show.success('Success');
+                }
+            }, function (error) {
+                _this.onError(error);
             });
         };
         Controller.$inject = ['$injector'];

@@ -16,8 +16,8 @@ var Task = new Schema({
     section: String,
     title: String,
     description: String,
-    action: String,
     status: String,
+    relations: [String],
     _created: Date,
     _updated: Date
 });

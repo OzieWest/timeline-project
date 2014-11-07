@@ -54,14 +54,14 @@ class PageController extends BaseController {
     }
 
     clearAuth() {
-        delete this.$window.sessionStorage.expires;
-        delete this.$window.sessionStorage.token;
+        delete this.$window.localStorage.expires;
+        delete this.$window.localStorage.token;
         return this.$location.path('/login');
     }
 
     isAuthenticate():boolean {
-        var expires = this.$window.sessionStorage.expires;
-        var token = this.$window.sessionStorage.token;
+        var expires = this.$window.localStorage.expires;
+        var token = this.$window.localStorage.token;
 
         if (!expires && !token) {
             return false;
@@ -87,7 +87,7 @@ class PageController extends BaseController {
                 method: 'get',
                 url: './api/v1/profile',
                 headers: {
-                    Auth: this.$window.sessionStorage.token
+                    Auth: this.$window.localStorage.token
                 }
             };
             this.$http(query).then(
@@ -96,9 +96,8 @@ class PageController extends BaseController {
                     this.isPageReady = true;
                     cb();
                 },
-                (error) => {
-                    return this.clearAuth();
-                });
+                (error) =>
+                    this.clearAuth());
         }
     }
 

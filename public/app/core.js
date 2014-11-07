@@ -34,7 +34,7 @@ var APP_CORE;
         RestangularProvider.setBaseUrl('/api/v1/');
         RestangularProvider.setDefaultHeaders({
             auth: function () {
-                return window.sessionStorage['token'];
+                return window.localStorage['token'];
             }
         });
         RestangularProvider.addRequestInterceptor(function (element, operation, route, url) {
@@ -53,10 +53,12 @@ var APP_CORE;
     /* App */
     angular.module('app.core', [
         'ngRoute',
+        'ngSanitize',
         'ui.bootstrap',
         'restangular',
         'monospaced.elastic',
         'app.headerBar',
+        'app.linkerFilter',
         'app.dashboard',
         'app.login',
     ]).config(routeConfig).config(restangularConfig).constant('toastr', toastr).factory('Context', Context);

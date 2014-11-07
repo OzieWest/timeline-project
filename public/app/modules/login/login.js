@@ -33,8 +33,8 @@ var APP_LOGIN;
                 };
                 this.$http.post('./api/v1/login', query).then(function (result) {
                     _this.Context.user = result.data.user;
-                    _this.$window.sessionStorage.token = result.data.token;
-                    _this.$window.sessionStorage.expires = result.data.expires;
+                    _this.$window.localStorage.token = result.data.token;
+                    _this.$window.localStorage.expires = result.data.expires;
                     _this.show.success('Success');
                     _this.$location.path('/dashboard');
                 }, function (error) {

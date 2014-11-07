@@ -4,8 +4,8 @@
     }
 </style>
 
-<div class="single-widget-container">
-    <section class="widget login-widget">
+<div class="single-widget-container" ng-show="ctrl.isPageReady">
+    <section class="widget login-widget fade" ng-class="{'in':!ctrl.isPageBusy}">
         <header class="text-align-center">
             <h4>Login to your account</h4>
         </header>

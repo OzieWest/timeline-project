@@ -37,13 +37,13 @@ var PageController = (function (_super) {
         this.isPageBusy = true;
     }
     PageController.prototype.clearAuth = function () {
-        delete this.$window.sessionStorage.expires;
-        delete this.$window.sessionStorage.token;
+        delete this.$window.localStorage.expires;
+        delete this.$window.localStorage.token;
         return this.$location.path('/login');
     };
     PageController.prototype.isAuthenticate = function () {
-        var expires = this.$window.sessionStorage.expires;
-        var token = this.$window.sessionStorage.token;
+        var expires = this.$window.localStorage.expires;
+        var token = this.$window.localStorage.token;
         if (!expires && !token) {
             return false;
         }
@@ -66,16 +66,14 @@ var PageController = (function (_super) {
                 method: 'get',
                 url: './api/v1/profile',
                 headers: {
-                    Auth: this.$window.sessionStorage.token
+                    Auth: this.$window.localStorage.token
                 }
             };
             this.$http(query).then(function (result) {
                 _this.Context.user = result.data;
                 _this.isPageReady = true;
                 cb();
-            }, function (error) {
-                return _this.clearAuth();
-            });
+            }, function (error) { return _this.clearAuth(); });
         }
     };
     PageController.prototype.isUserInRole = function (role) {

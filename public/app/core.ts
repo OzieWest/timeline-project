@@ -43,7 +43,7 @@ module APP_CORE {
 
 		RestangularProvider.setDefaultHeaders({
 			auth: function () {
-				return window.sessionStorage['token'];
+				return window.localStorage['token'];
 			}
 		});
 
@@ -67,12 +67,14 @@ module APP_CORE {
 	angular
 		.module('app.core', [
 			'ngRoute',
-			//'ngMaterial',
+			'ngSanitize',
 			'ui.bootstrap',
 			'restangular',
 			'monospaced.elastic',
 
 			'app.headerBar',
+			'app.linkerFilter',
+
 			'app.dashboard',
 			'app.login',
 		])

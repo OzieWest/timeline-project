@@ -47,6 +47,10 @@
         margin-top: 25px;
     }
 
+    .subject-link{
+        color:rgb(6, 191, 245);
+    }
+
 </style>
 
 <div class="fade" ng-class="{'in':ctrl.isPageReady}">
@@ -107,7 +111,7 @@
                                 </div>
                                 <div class="feed-content">
                                     <div ng-if="!task.expand">
-                                        {{ task.message }}
+                                        <div ng-bind-html="task.message | linker"></div>
                                     </div>
                                     <div ng-if="task.expand">
                                         <textarea rows="5"

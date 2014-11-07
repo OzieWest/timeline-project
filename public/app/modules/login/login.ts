@@ -36,8 +36,8 @@ module APP_LOGIN {
                 this.$http.post('./api/v1/login', query).then(
                     (result:any) => {
                         this.Context.user = result.data.user;
-                        this.$window.sessionStorage.token = result.data.token;
-                        this.$window.sessionStorage.expires = result.data.expires;
+                        this.$window.localStorage.token = result.data.token;
+                        this.$window.localStorage.expires = result.data.expires;
 
                         this.show.success('Success');
                         this.$location.path('/dashboard');

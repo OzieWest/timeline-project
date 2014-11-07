@@ -1,0 +1,140 @@
+﻿<style>
+    .icon, i {
+        cursor: pointer;
+    }
+    section.feed-item {
+        margin-top: 0 !important;
+        padding: 10px;
+        border-bottom: 1px solid rgba(51, 51, 51, 0.4);
+    }
+    section.feed-item:hover{
+        background: rgba(84, 83, 83, 0.4);
+    }
+
+    .widget{
+        font-size: 1.1em;
+        padding: 0 !important;
+    }
+
+    .feed-time{
+        font-size: 0.8em;
+        color:#B8B7B7;
+        margin-left: 10px;
+    }
+    .feed-user {
+        font-weight: bold;
+        color: rgb(218, 218, 218);
+    }
+    .feed-content{
+        margin-top: 5px;
+    }
+
+    .btn {
+        border-radius: 15px;
+    }
+
+    .input-panel{
+        border-bottom: 1px solid rgba(51, 51, 51, 0.4);
+        padding: 10px 10px 40px 10px;
+    }
+
+    .message-length{
+        color: gray;
+        margin-right: 10px;
+    }
+
+    .main-cont{
+        margin-top: 25px;
+    }
+
+</style>
+
+<div class="fade" ng-class="{'in':ctrl.isPageReady}">
+    <div class="main-cont container fade" ng-class="{'in':!ctrl.isPageBusy}">
+
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="widget">
+
+                    <div class="input-panel">
+                        <div>
+                            <textarea class="form-control"
+                                      msd-elastic="\n"
+                                      ng-model="ctrl.newTask.message"
+                                      autofocus
+                                      placeholder="Create new task"></textarea>
+                            <div style="margin-top: 10px;">
+                                <div class="pull-right">
+                                    <span class="message-length">
+                                        {{ ctrl.newTask.message.length }}
+                                    </span>
+                                    <button class="btn btn-default" ng-click="ctrl.createTask()">
+                                        Create <i class="fa fa-pencil"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wrapper">
+                        <div class="vertical-line"></div>
+                        <section class="feed-item" ng-repeat="task in ctrl.taskList | filter:ctrl.search track by $index">
+                            <div class="pull-right">
+                                <i ng-if="!task.expand" ng-click="ctrl.expandTask(task)" class="fa fa-folder-o"></i>
+                                <i ng-if="task.expand" ng-click="ctrl.expandTask(task)" class="fa fa-folder-open-o"></i>
+                            </div>
+                            <div class="icon pull-left"
+                                 style="color:green"
+                                 ng-click="ctrl.setStatus('progress', task)"
+                                 ng-if="task.status === 'success'">
+                                <i class="fa fa-check"></i>
+                            </div>
+                            <div class="icon pull-left"
+                                 style="color:orange"
+                                 ng-if="task.status === 'progress'"
+                                 ng-click="ctrl.setStatus('success', task)">
+                                <i class="fa fa-clock-o"></i>
+                            </div>
+                            <div class="feed-item-body">
+                                <div class="text">
+                                    <span class="feed-user">
+                                        {{ ctrl.Context.user.username }}
+                                    </span>
+                                    <span class="feed-time">
+                                        {{ task._created | date:'medium' }}
+                                    </span>
+                                </div>
+                                <div class="feed-content">
+                                    <div ng-if="!task.expand">
+                                        {{ task.message }}
+                                    </div>
+                                    <div ng-if="task.expand">
+                                        <textarea rows="5"
+                                                  class="form-control input-transparent"
+                                                  ng-model="task.message"
+                                                  placeholder="Message"></textarea>
+                                        <div style="margin-top: 10px">
+                                            <div class="icon pull-left" ng-click="ctrl.deleteTask(task)">
+                                                <i class="fa fa-trash-o"></i>
+                                            </div>
+                                            <div class="pull-right">
+                                                <button class="btn btn-default" ng-click="ctrl.updateTask(task)">
+                                                    Save <i class="fa fa-pencil"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </section>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

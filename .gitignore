@@ -1,13 +1,3 @@
-TimelineProject/main/server/public/bower_components
-TimelineProject/main/server/node_modules
-TimelineProject/main/server/typings
-TimelineProject/obj
-TimelineProject/bin
-TimelineProject/Properties
-TimelineProject/Web.config
-TimelineProject/Web.Debug.config
-TimelineProject/Web.Release.config
-TimelineProject/TimelineProject.csproj
-TimelineProject/TimelineProject.csproj.user
-TimelineProject.sln
-TimelineProject.v12.suo
+/.idea
+/node_modules
+/public/bower_components

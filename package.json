@@ -1,0 +1,20 @@
+{
+  "name": "Timeline",
+  "version": "0.0.0",
+  "description": "",
+  "main": "runserver.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "soramusoka@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.9.2",
+    "express": "^4.10.1",
+    "jwt-simple": "^0.2.0",
+    "moment": "^2.8.3",
+    "mongoose": "^3.8.18",
+    "morgan": "^1.4.1",
+    "underscore": "^1.7.0"
+  }
+}

@@ -1,4 +1,4 @@
-﻿<style>
+<style>
     .login-widget .form-actions, .registration-widget .form-actions {
         padding: 20px;
     }
@@ -7,7 +7,7 @@
 <div class="single-widget-container" ng-show="ctrl.isPageReady">
     <section class="widget login-widget fade" ng-class="{'in':!ctrl.isPageBusy}">
         <header class="text-align-center">
-            <h4>Login to your account</h4>
+            <h4>Create new account</h4>
         </header>
         <div class="body">
             <form class="no-margin" novalidate name="form">
@@ -57,11 +57,11 @@
                 </fieldset>
                 <div class="form-actions">
                     <button type="submit"
-                            class="btn btn-block btn-lg btn-info"
+                            class="btn btn-block btn-lg btn-danger"
                             ng-disabled="form.$invalid"
-                            ng-click="ctrl.login()">
+                            ng-click="ctrl.registration()">
                         <span class="small-circle"><i class="fa fa-caret-right"></i></span>
-                        <small>Log in</small>
+                        <small>Register</small>
                     </button>
                 </div>
             </form>

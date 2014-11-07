@@ -28,9 +28,9 @@ module APP_CORE {
 				controller: 'dashboardCtrl',
 				controllerAs: 'ctrl'
 			})
-			.when('/tasks/:id', {
-				templateUrl: GLOBAL.path.modules('task_item/task_item.html'),
-				controller: 'taskItemCtrl',
+			.when('/registration', {
+				templateUrl: GLOBAL.path.modules('registration/registration.html'),
+				controller: 'registrationCtrl',
 				controllerAs: 'ctrl'
 			})
 			.otherwise({ redirectTo: '/dashboard' });
@@ -77,6 +77,7 @@ module APP_CORE {
 
 			'app.dashboard',
 			'app.login',
+			'app.registration'
 		])
 		.config(routeConfig)
 		.config(restangularConfig)

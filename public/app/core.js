@@ -22,9 +22,9 @@ var APP_CORE;
             templateUrl: GLOBAL.path.modules('dashboard/dashboard.html'),
             controller: 'dashboardCtrl',
             controllerAs: 'ctrl'
-        }).when('/tasks/:id', {
-            templateUrl: GLOBAL.path.modules('task_item/task_item.html'),
-            controller: 'taskItemCtrl',
+        }).when('/registration', {
+            templateUrl: GLOBAL.path.modules('registration/registration.html'),
+            controller: 'registrationCtrl',
             controllerAs: 'ctrl'
         }).otherwise({ redirectTo: '/dashboard' });
     }
@@ -61,6 +61,7 @@ var APP_CORE;
         'app.linkerFilter',
         'app.dashboard',
         'app.login',
+        'app.registration'
     ]).config(routeConfig).config(restangularConfig).constant('toastr', toastr).factory('Context', Context);
 })(APP_CORE || (APP_CORE = {}));
 //# sourceMappingURL=core.js.map

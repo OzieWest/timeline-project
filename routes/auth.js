@@ -24,6 +24,37 @@ module.exports.login = function (req, res) {
         });
     });
 };
+module.exports.registration = function (req, res) {
+    if (!req.body)
+        return res.status(400).end();
+    var username = req.body.username;
+    var password = req.body.password;
+    if (!username || !password)
+        return res.status(400).end();
+    UserScheme.findOne({ username: username }, function (error, user) {
+        console.log('1', error);
+        if (error)
+            return res.status(500).end();
+        if (user)
+            return res.status(400).send({ message: 'User exists' });
+        console.log(error);
+        var salt = authHelper.createSalt();
+        var newUser = {
+            role: 'user',
+            salt: salt,
+            username: username,
+            password: authHelper.hashPassword(salt, password),
+            _created: new Date(),
+            _updated: new Date()
+        };
+        UserScheme.create(newUser, function (err, data) {
+            console.log('2', err);
+            if (err)
+                return res.status(500).end();
+            res.send(data);
+        });
+    });
+};
 module.exports.check = function (req, res, next) {
     var token = req.headers.auth;
     if (!token)

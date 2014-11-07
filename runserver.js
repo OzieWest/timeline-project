@@ -13,6 +13,7 @@ app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-
 /* Routing */
 var auth = require('./routes/auth');
 app.post('/api/v1/login', auth.login);
+app.post('/api/v1/registration', auth.registration);
 app.get('/api/v1/profile', auth.check, auth.profile);
 var tasks = require('./routes/tasks');
 app.get('/api/v1/tasks', auth.check, tasks.list);

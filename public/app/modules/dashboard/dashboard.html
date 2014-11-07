@@ -19,7 +19,7 @@
     .feed-time{
         font-size: 0.8em;
         color:#B8B7B7;
-        margin-left: 10px;
+        /*margin-left: 10px;*/
     }
     .feed-user {
         font-weight: bold;
@@ -102,9 +102,6 @@
                             </div>
                             <div class="feed-item-body">
                                 <div class="text">
-                                    <span class="feed-user">
-                                        {{ ctrl.Context.user.username }}
-                                    </span>
                                     <span class="feed-time">
                                         {{ task._created | date:'medium' }}
                                     </span>
